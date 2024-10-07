@@ -106,7 +106,7 @@ def get_denorm(Tr_velo_to_cam):
     return denorm
 
 parser = argparse.ArgumentParser("Generate the Kitti Format Label")
-parser.add_argument("--data_path", type=str, default="/home/ubuntu/duyuwen/ChatSim_v2x/result/standard_tum_sim_light", help="Raw data root about RCooper_standard.")
+parser.add_argument("--data_path", type=str, default="/home/ubuntu/duyuwen/ChatSim_v2x/result/standard_tum", help="Raw data root about RCooper_standard.")
 parser.add_argument("--demo", type=bool, default=False, help="Visualize the label or not.")
 parser.add_argument("--demo_path", type=str, default="/home/ubuntu/duyuwen/ChatSim_v2x/result/vis", help="The path to save the visualized label.")
 

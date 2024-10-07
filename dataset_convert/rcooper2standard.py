@@ -21,7 +21,7 @@ def copy_data(origin_path,dst_path):
         dst_file = os.path.join(dst_path, name.replace('.','_')+ext)
         os.system('cp ' + origin_file + ' ' + dst_file)
 
-def generate_image_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq):
+def generate_image_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq,save_path):
     road_name, cam_id = cam_name.rsplit('-', 1)
     cam_id = int(cam_id) 
     for seq_name in tqdm(sorted(seq_list)):
@@ -29,14 +29,14 @@ def generate_image_label(seq_list, road_seq_path, road_seq, cam_name, val_data_s
         road_seq_label_path = re.sub(r'(?<!/data/)/data/([^/]+)$', '/label/\\1', road_seq_path)
         origin_label_path = os.path.join(road_seq_label_path, road_name, seq_name)
         if int(seq_name.split('-')[-1]) in val_data_seq:
-            dst_image_path = os.path.join(args.save_path,road_seq,cam_name, 'val', 'image')
-            dst_label_path = os.path.join(args.save_path,road_seq,cam_name, 'val', 'label/lidar_label')
+            dst_image_path = os.path.join(save_path,road_seq,cam_name, 'val', 'image')
+            dst_label_path = os.path.join(save_path,road_seq,cam_name, 'val', 'label/lidar_label')
         elif int(seq_name.split('-')[-1]) in test_data_seq:
-            dst_image_path = os.path.join(args.save_path,road_seq,cam_name, 'test', 'image')
-            dst_label_path = os.path.join(args.save_path,road_seq,cam_name, 'test', 'label/lidar_label')
+            dst_image_path = os.path.join(save_path,road_seq,cam_name, 'test', 'image')
+            dst_label_path = os.path.join(save_path,road_seq,cam_name, 'test', 'label/lidar_label')
         else:
-            dst_image_path = os.path.join(args.save_path,road_seq,cam_name, 'train', 'image')
-            dst_label_path = os.path.join(args.save_path,road_seq,cam_name, 'train', 'label/lidar_label')
+            dst_image_path = os.path.join(save_path,road_seq,cam_name, 'train', 'image')
+            dst_label_path = os.path.join(save_path,road_seq,cam_name, 'train', 'label/lidar_label')
         copy_data(origin_image_path, dst_image_path)
         copy_data(origin_label_path, dst_label_path) 
        
@@ -70,18 +70,18 @@ def label_filter(origin_label_path, dst_label_path, P, r_velo2cam, t_velo2cam):
         with open(dst_file, 'w') as f:
             json.dump(processed_label, f, indent=4)
 
-def generate_filtered_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq):
+def generate_filtered_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq,save_path):
     road_name, cam_id = cam_name.rsplit('-', 1)
     cam_id = int(cam_id) 
     for seq_name in sorted(seq_list):
         road_seq_label_path = re.sub(r'(?<!/data/)/data/([^/]+)$', '/label/\\1', road_seq_path)
         origin_label_path = os.path.join(road_seq_label_path, road_name, seq_name)
         if int(seq_name.split('-')[-1]) in val_data_seq:
-            dst_label_path = os.path.join(args.save_path,road_seq,cam_name, 'val', 'label/camera_label')
+            dst_label_path = os.path.join(save_path,road_seq,cam_name, 'val', 'label/camera_label')
         elif int(seq_name.split('-')[-1]) in test_data_seq:
-            dst_label_path = os.path.join(args.save_path,road_seq,cam_name, 'test', 'label/camera_label')
+            dst_label_path = os.path.join(save_path,road_seq,cam_name, 'test', 'label/camera_label')
         else:
-            dst_label_path = os.path.join(args.save_path,road_seq,cam_name, 'train', 'label/camera_label')
+            dst_label_path = os.path.join(save_path,road_seq,cam_name, 'train', 'label/camera_label')
         P, r_velo2cam, t_velo2cam = get_calib(calib_path, road_name, cam_id)
         label_filter(origin_label_path, dst_label_path, P, r_velo2cam, t_velo2cam) 
 
@@ -141,16 +141,16 @@ def generate_coop_label(seq_list,road_seq_path, road_name,save_coop_path,val_dat
         copy_data(origin_label_path, dst_label_path)
     
     
-def generate_lidar(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq):  
+def generate_lidar(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq,save_path):  
     road_name, cam_id = cam_name.rsplit('-', 1)
     for seq_name in sorted(seq_list):
         origin_lidar_path = os.path.join(road_seq_path.replace('label','data'), road_name, seq_name,'lidar')
         if int(seq_name.split('-')[-1]) in val_data_seq:
-            dst_lidar_path = os.path.join(args.save_path,road_seq,cam_name, 'val', 'lidar')
+            dst_lidar_path = os.path.join(save_path,road_seq,cam_name, 'val', 'lidar')
         elif int(seq_name.split('-')[-1]) in test_data_seq:
-            dst_lidar_path = os.path.join(args.save_path,road_seq,cam_name, 'test', 'lidar')
+            dst_lidar_path = os.path.join(save_path,road_seq,cam_name, 'test', 'lidar')
         else:
-            dst_lidar_path = os.path.join(args.save_path,road_seq,cam_name, 'train', 'lidar')
+            dst_lidar_path = os.path.join(save_path,road_seq,cam_name, 'train', 'lidar')
         copy_data(origin_lidar_path, dst_lidar_path)
         
 if __name__ == '__main__':
@@ -189,10 +189,10 @@ if __name__ == '__main__':
                 cam_name = road_name + '-' + str(cam_id)
 
                 print(f'============== Processing image and label ==============')
-                generate_image_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq)
+                generate_image_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq,args.save_path)
 
                 print(f'============== Processing filtered label ==============')
-                generate_filtered_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq)
+                generate_filtered_label(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq,args.save_path)
 
                 print(f'============== Processing calib ==============')
                 # generate calib for each camera
@@ -201,7 +201,7 @@ if __name__ == '__main__':
                 if 'sim' in road_seq_path:
                     continue
                 print(f'============== Processing lidar ==============')
-                generate_lidar(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq)
+                generate_lidar(seq_list, road_seq_path, road_seq, cam_name, val_data_seq, test_data_seq,args.save_path)
         
         # generate coop label for the road sequence
         print(f'============== Processing coop label ==============')
